@@ -9,22 +9,22 @@ ifeq ($(shell uname -s), Linux)
 endif
 #              Файлы для основного проекта
 PROJECT_FILES_SOURCES= main_debug.cpp DataS21Student.cpp
-PROJECT_FILES_OBJECTS=$(addprefix ./$(BD)/,$(PROJECT_FILES_SOURCES:.cpp=.o))
+PROJECT_FILES_OBJECTS=$(addprefix $(BD)/,$(PROJECT_FILES_SOURCES:.cpp=.o))
 
 all: clean debug
 
+./$(BD)/%.o:%.cpp
+	$(CC) $(CXX_FLAGS) $< -o $@
 
-$(BD)/%.o:*/%.cpp
+./$(BD)/%.o:*/%.cpp
 	$(CC) $(CXX_FLAGS) $< -o $@
  
-$(BD)/%.o: */*/%.cpp
+./$(BD)/%.o: */*/%.cpp
 	$(CC) $(CXX_FLAGS) $< -o $@
 
-$(BD)/%.o: */*/*/%.cpp
+./$(BD)/%.o: */*/*/%.cpp
 	$(CC) $(CXX_FLAGS) $< -o $@
 
-$(BD)/%.o:%.cpp
-	$(CC) $(CXX_FLAGS) $< -o $@
 debug:$(PROJECT_FILES_OBJECTS)
 	$(CC) -g  $^ -o $(BD)/$@ 
 	./$(BD)/$@

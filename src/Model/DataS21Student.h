@@ -2,15 +2,17 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <sstream>
 namespace s21 {
 
-struct DataS21Student {
-    DataS21Student() = delete;
+class DataS21Student {
+ public:
+    DataS21Student() = default;
     DataS21Student(const std::string&, const std::string&, int, const std::string&, int);
     DataS21Student(const DataS21Student&);
     std::string toStdString() const;
 
-   public:
+ public:
     std::string getFirstname();
     std::string getLastname();
     std::string getCity();
@@ -21,7 +23,8 @@ struct DataS21Student {
     void setCity(const std::string&);
     void setYear(int);
     void setCoins(int);
-   private:
+    void initFromStdStr(const std::string&);
+ private:
     std::string firstname;
     std::string lastname;
     int birthYear;
@@ -31,7 +34,7 @@ struct DataS21Student {
 
 std::ostream& operator<<(std::ostream& os, DataS21Student& entry);
 std::ofstream& operator<<(std::ofstream& ofs, DataS21Student& entry);
-std::istream& operator>>(std::istream& is,DataS21Student& entry);
-std::ifstream& operator>>(std::ifstream& ifs,DataS21Student& entry);
+std::istream& operator>>(std::istream& is, DataS21Student& entry);
+std::ifstream& operator>>(std::ifstream& ifs, DataS21Student& entry);
 
 }  // namespace s21
