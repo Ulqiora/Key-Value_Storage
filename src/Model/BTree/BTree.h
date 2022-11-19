@@ -13,8 +13,10 @@ class Btree : public IDataOperations<Key, Value> {
         } else {
             if (root->isCompleted()) {
                 NodeBtree<Key,Value>* tmpNode = new NodeBtree<Key, Value>(level, TypeOfNode::ROOT);
-                tmpNode
+                tmpNode->getDescendent(0)=root;
                 tmpNode->insert(root);
+                int index=0;
+                if(tmpNode.)
             } else {
                 root->insert(key, value);
             }

@@ -36,7 +36,8 @@ class NodeBtree {
         NodeBtree<Key, Value>* tempNode = new NodeBtree<Key, Value>(level, node->isLeaf);
     }
     void insert(const Key& key, const Value& value) {}
-    std::pair<Key, Value>* getDescendent(int i) { return keyValues[i]; }
+    NodeBtree<Key, Value>* getDescendent(int i) { return descendents[i]; }
+    Key get
 
     //          Class Fields
  private:
