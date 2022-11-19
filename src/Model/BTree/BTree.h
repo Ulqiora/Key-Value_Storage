@@ -8,9 +8,7 @@ class Btree : public IDataOperations<Key, Value> {
     const static int MAX_ORDER_OF_NODE = 10000;
     int orderOfBTree = 0;
     int levelTree=0;
-    NodeBtree<Key, Value>* root = nullptr;
-    NodeBtree<Key, Value>* currNode = nullptr;
-    auto findFirstLarger=[&key](std::pair<Key, Value> i) { return i.first > k; };
+    NodeBtree<Key, Value> root;
 
    public:
     void SET(const Key& key,const Value& value) final {
@@ -19,7 +17,7 @@ class Btree : public IDataOperations<Key, Value> {
             levelTree++;
             root = new NodeBtree<Key,Value>(key,value);
         } else if(root->descendents.size()!=orderOfBTree){
-            auto found = std::find_if(currNode->keyValue.begin(), currNode->keyValue.end(),findFirstLarger);
+            // auto found = std::find_if(currNode->keyValue.begin(), currNode->keyValue.end(),findFirstLarger);
             
         }
     }
