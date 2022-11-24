@@ -67,4 +67,22 @@ std::ifstream& operator>>(std::ifstream& ifs, DataS21Student& entry) {
     return ifs;
 }
 
+bool DataS21Student::operator==(const DataS21Student& other) const {
+    if(other.birthYear!=birthYear) return false;
+    if(other.firstname!=firstname) return false;
+    if(other.lastname!=lastname) return false;
+    if(other.city!=city) return false;
+    if(other.numOfCoins!=numOfCoins) return false;
+    return true;
+}
+
+DataS21Student& DataS21Student::operator=(const DataS21Student& other){
+  if (other.firstname != "-") firstname = other.firstname;
+  if (other.lastname != "-") lastname = other.lastname;
+  if (other.birthYear != 0) birthYear = other.birthYear;
+  if (other.city != "-") city = other.city;
+  if (other.numOfCoins != -1) numOfCoins = other.numOfCoins;
+  return *this;
+}
+
 }  // namespace s21

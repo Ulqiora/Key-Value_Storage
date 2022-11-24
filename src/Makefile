@@ -8,10 +8,11 @@ ifeq ($(shell uname -s), Linux)
 	GTESTFLAGS+= -lpthread -lrt
 endif
 #              Файлы для основного проекта
-PROJECT_FILES_SOURCES= main_debug.cpp DataS21Student.cpp
+PROJECT_FILES_SOURCES= main_debug.cpp DataS21Student.cpp Btree.cpp
+PROJECT_FILES_SOURCES_DEBUG= main_debug.cpp Model/DataS21Student.cpp Model/BTree/Btree.cpp
 PROJECT_FILES_OBJECTS=$(addprefix $(BD)/,$(PROJECT_FILES_SOURCES:.cpp=.o))
 
-all: clean debug
+all: clean start
 
 ./$(BD)/%.o:%.cpp
 	$(CC) $(CXX_FLAGS) $< -o $@
@@ -25,9 +26,13 @@ all: clean debug
 ./$(BD)/%.o: */*/*/%.cpp
 	$(CC) $(CXX_FLAGS) $< -o $@
 
-debug:$(PROJECT_FILES_OBJECTS)
+start:$(PROJECT_FILES_OBJECTS)
 	$(CC) -g  $^ -o $(BD)/$@ 
 	./$(BD)/$@
+
+debug:$(PROJECT_FILES_SOURCES_DEBUG)
+	$(CC) -g  $^ -o $(BD)/$@ 
+
 tests: clean test_exe
 	./$(BD)/test
 

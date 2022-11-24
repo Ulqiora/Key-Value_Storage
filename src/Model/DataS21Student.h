@@ -11,7 +11,8 @@ class DataS21Student {
     DataS21Student(const std::string&, const std::string&, int, const std::string&, int);
     DataS21Student(const DataS21Student&);
     std::string toStdString() const;
-
+   bool operator==(const DataS21Student&)const;
+   DataS21Student& operator=(const DataS21Student&);
  public:
     std::string getFirstname();
     std::string getLastname();
