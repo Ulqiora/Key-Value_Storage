@@ -126,6 +126,10 @@ void BTree::UPDATE(const Key& key, const Value& value) {
     std::pair<Key,Value>* findedPair=root->findValueByKey(key);
     if(findedPair!=nullptr) findedPair->second=value;
 }
-//     
+//     KEYS
+
+std::vector<BTree::Key> BTree::KEYS(){
+    return root->getKeys();
+}
 
 }  // namespace s21

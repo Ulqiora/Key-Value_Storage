@@ -10,6 +10,9 @@ int main(){
   tree.SET("fe", {"fsda", "fdsa", 22, "fdas", 25});
   tree.SET("fg", {"fsda", "fdsa", 22, "fdas", 26});
   tree.SET("fh", {"fsda", "fdsa", 22, "fdas", 27});
+  tree.SET("fi", {"fsda", "fdsa", 22, "fdas", 27});
+  tree.SET("fk", {"fsda", "fdsa", 22, "fdas", 27});
+  tree.SET("fl", {"fsda", "fdsa", 22, "fdas", 27});
   tree.SET("fr", {"fsda", "fdsa", 22, "fdas", 28});
   tree.SET("fx", {"fsda", "fdsa", 22, "fdas", 29});
   tree.SET("fy", {"fsda", "fdsa", 22, "fdas", 29});
@@ -22,6 +25,10 @@ int main(){
   tree.SET("fzf", {"fsda", "fdsa", 22, "fdas", 29});
   tree.SET("fzg", {"fsda", "fdsa", 22, "fdas", 29});
   std::cout<<*tree.GET("fe")<<'\n';
+  auto res=tree.KEYS();
+  for(auto i:res){
+    std::cout<<i<<' ';
+  }
   // std::cout<<tree.sizeOfDescendants()<<'\n';
   // tree.printToGraphViz("Test.dot");
   // tree.SET("foo",{"fsda","fdsa",22,"fdas",23});

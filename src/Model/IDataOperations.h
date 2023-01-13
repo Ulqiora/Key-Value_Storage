@@ -18,7 +18,7 @@ public:
     virtual bool EXISTS(const Key&)=0;
     // virtual bool DEL(const Key&)=0;
     virtual void UPDATE(const Key&,const Value&)=0;
-    // virtual std::vector<Key> KEYS()=0;
+    virtual std::vector<Key> KEYS()=0;
     // virtual void RENAME(const Key&,const Key&)=0;
     // virtual void TTL(const Key&)=0;
     // virtual std::vector<Key> FIND(const Value&)=0;

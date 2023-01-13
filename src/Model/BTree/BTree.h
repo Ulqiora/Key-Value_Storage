@@ -26,6 +26,31 @@ class BTree : public IDataOperations {
         std::string toString();
         void printInfo(std::ofstream&);
         std::pair<Key, Value>* findValueByKey(const Key&);
+        std::vector<Key> getKeys(){
+            std::vector<Key> result;
+            if(isLeaf){
+                result.reserve(keyValues.size());
+                for(auto& curr_pair: keyValues){
+                    result.push_back(curr_pair->first);
+                }
+            } else {
+                // std::vector<Key> result;
+                result.reserve(keyValues.size());
+                for(int i=0;i<keyValues.size();i++){
+                    auto keysDescendents=descendants[i]->getKeys();
+                    for(auto& keysDescendent:keysDescendents){
+                        result.push_back(keysDescendent);
+                    }
+                    result.push_back(keyValues[i]->first);
+                }
+                auto keysDescendents=descendants[descendants.size()-1]->getKeys();
+                for(auto& keysDescendent:keysDescendents){
+                    result.push_back(keysDescendent);
+                }
+                // return  result;
+            }
+            return result;
+        }
     };
 
    public:
@@ -39,7 +64,7 @@ class BTree : public IDataOperations {
     bool EXISTS(const Key&) final;
     // bool DEL(const Key&) final {}
     void UPDATE(const Key&, const Value&) final;
-    // std::vector<Key> KEYS() final {}
+    std::vector<Key> KEYS() final;
     // void RENAME(const Key&, const Key&) final {}
     // void TTL(const Key&) final {}
     // std::vector<Key> FIND(const Value&) final {}
@@ -57,6 +82,6 @@ class BTree : public IDataOperations {
     const static int MAX_ORDER_OF_NODE = 10000;
     const static int MIN_ORDER_OF_NODE = 2;
     int degree;
-    NodeBTree* root;
+    NodeBTree* root=nullptr;
 };
 }  // namespace s21
