@@ -25,32 +25,8 @@ class BTree : public IDataOperations {
         bool isFull() { return keyValues.size() == (degree * 2 - 1); }
         std::string toString();
         void printInfo(std::ofstream&);
-        std::pair<Key, Value>* findValueByKey(const Key&);
-        std::vector<Key> getKeys(){
-            std::vector<Key> result;
-            if(isLeaf){
-                result.reserve(keyValues.size());
-                for(auto& curr_pair: keyValues){
-                    result.push_back(curr_pair->first);
-                }
-            } else {
-                // std::vector<Key> result;
-                result.reserve(keyValues.size());
-                for(int i=0;i<keyValues.size();i++){
-                    auto keysDescendents=descendants[i]->getKeys();
-                    for(auto& keysDescendent:keysDescendents){
-                        result.push_back(keysDescendent);
-                    }
-                    result.push_back(keyValues[i]->first);
-                }
-                auto keysDescendents=descendants[descendants.size()-1]->getKeys();
-                for(auto& keysDescendent:keysDescendents){
-                    result.push_back(keysDescendent);
-                }
-                // return  result;
-            }
-            return result;
-        }
+        std::pair<Key,Value>* findValueByKey(const Key&);
+        std::vector<Key> getKeys();
     };
 
    public:
@@ -60,7 +36,7 @@ class BTree : public IDataOperations {
         degree = newlevel;
     }
     void SET(const Key& key, const Value& value) final;
-    Value* GET(const Key&) final;
+    std::optional<Value> GET(const Key&) final;
     bool EXISTS(const Key&) final;
     // bool DEL(const Key&) final {}
     void UPDATE(const Key&, const Value&) final;

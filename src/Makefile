@@ -12,6 +12,9 @@ PROJECT_FILES_SOURCES= main_debug.cpp DataS21Student.cpp Btree.cpp
 PROJECT_FILES_SOURCES_DEBUG= main_debug.cpp Model/DataS21Student.cpp Model/BTree/Btree.cpp
 PROJECT_FILES_OBJECTS=$(addprefix $(BD)/,$(PROJECT_FILES_SOURCES:.cpp=.o))
 
+TESTS_FILES_SOURCES=test.cpp
+TESTS_FILES_OBJECTS=$(addprefix $(BD)/,$(TESTS_FILES_SOURCES:.cpp=.o))
+
 all: clean start
 
 ./$(BD)/%.o:%.cpp

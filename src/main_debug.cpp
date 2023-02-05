@@ -24,7 +24,7 @@ int main(){
   tree.SET("fze", {"fsda", "fdsa", 22, "fdas", 29});
   tree.SET("fzf", {"fsda", "fdsa", 22, "fdas", 29});
   tree.SET("fzg", {"fsda", "fdsa", 22, "fdas", 29});
-  std::cout<<*tree.GET("fe")<<'\n';
+  auto result=tree.GET("fe").value();
   auto res=tree.KEYS();
   for(auto i:res){
     std::cout<<i<<' ';

@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <functional>
 #include <chrono>
+#include <optional>
+
 #include "DataS21Student.h"
 namespace s21{
 
@@ -14,7 +16,7 @@ public:
     using Key = std::string;
     using Value = DataS21Student;
     virtual void SET(const Key&,const Value&)=0;
-    virtual Value* GET(const Key&)=0;
+    virtual std::optional<Value> GET(const Key&)=0;
     virtual bool EXISTS(const Key&)=0;
     // virtual bool DEL(const Key&)=0;
     virtual void UPDATE(const Key&,const Value&)=0;

@@ -1,6 +1,7 @@
 #include "BTree.h"
 
 namespace s21 {
+//          SET
 void BTree::SET(const Key& key, const Value& value) {
     // std::cout<<"set is start!";
     if (root == nullptr) {
@@ -95,41 +96,60 @@ void BTree::printToGraphViz(const std::string& filename ){
 }
 
 //         GET
-BTree::Value* BTree::GET(const Key& key){
-    std::pair<Key,Value>* findedPair=root->findValueByKey(key);
-    return findedPair==nullptr?nullptr:&findedPair->second;
+std::optional<BTree::Value> BTree::GET(const Key& key){
+    auto findedPair=root->findValueByKey(key);
+    if(findedPair)
+        return findedPair->second;
+    return std::nullopt;
 }
 
 std::pair<BTree::Key, BTree::Value>* BTree::NodeBTree::findValueByKey(const Key& key){
-    std::pair<Key, Value>* findedPair=nullptr;
     for (int i = 0; i < keyValues.size(); ++i) {
         if(keyValues[i]->first == key){
-            findedPair = keyValues[i];
-            break;
+            return (keyValues[i]);
         } else if (keyValues[i]->first > key && descendants[i] != nullptr) {
-            findedPair = descendants[i]->findValueByKey(key);
-            break;
+            return descendants[i]->findValueByKey(key);
         } else if ((i == (keyValues.size() - 1)) && (keyValues[i]->first < key) && (descendants[i+1] != nullptr)){
-            findedPair = descendants[i+1]->findValueByKey(key);
-            break;
+            return descendants[i+1]->findValueByKey(key);
         }
     }
-    return findedPair;
+    return nullptr;
 }
-//     EXISTS
+//          EXISTS
 bool BTree::EXISTS(const Key& key){
-    std::pair<Key,Value>* findedPair=root->findValueByKey(key);
-    return findedPair==nullptr?false:true;
+    return root->findValueByKey(key)==nullptr;
 }
-//     UPDATE
+//          UPDATE
 void BTree::UPDATE(const Key& key, const Value& value) {
     std::pair<Key,Value>* findedPair=root->findValueByKey(key);
     if(findedPair!=nullptr) findedPair->second=value;
 }
-//     KEYS
-
+//          KEYS
 std::vector<BTree::Key> BTree::KEYS(){
     return root->getKeys();
+}
+std::vector<BTree::Key> BTree::NodeBTree::getKeys(){
+    std::vector<Key> result;
+    if(isLeaf){
+        result.reserve(keyValues.size());
+        for(auto& curr_pair: keyValues){
+            result.push_back(curr_pair->first);
+        }
+    } else {
+        result.reserve(keyValues.size());
+        for(int i=0;i<keyValues.size();i++){
+            auto keysDescendents=descendants[i]->getKeys();
+            for(auto& keysDescendent:keysDescendents){
+                result.push_back(keysDescendent);
+            }
+            result.push_back(keyValues[i]->first);
+        }
+        auto keysDescendents=descendants[descendants.size()-1]->getKeys();
+        for(auto& keysDescendent:keysDescendents){
+            result.push_back(keysDescendent);
+        }
+    }
+    return result;
 }
 
 }  // namespace s21
