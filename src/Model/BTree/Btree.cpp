@@ -3,7 +3,6 @@
 namespace s21 {
 //          SET
 void BTree::SET(const Key& key, const Value& value) {
-    // std::cout<<"set is start!";
     if (root == nullptr) {
         root = new NodeBTree(degree, true);
         root->keyValues.push_back(new std::pair<Key, Value>(key, value));
@@ -13,12 +12,8 @@ void BTree::SET(const Key& key, const Value& value) {
     }
     if (rootIsFull()) {
         NodeBTree* newRoot = new NodeBTree(degree, false);
-        // std::cout<<"Split is start!";
-        // while(1){}
         newRoot->descendants.push_back(root);
-        // std::cout<<"Split is start!";
         newRoot->splitDescendants(0,root);
-        // std::cout<<"Split is complete!";
         int i=0;
         if(newRoot->keyValues[0]->first < key) i++;
         newRoot->descendants[i]->insert(key,value);
@@ -75,9 +70,9 @@ std::string BTree::NodeBTree::toString() {
 void BTree::NodeBTree::printInfo(std::ofstream& file) {
     for (auto descendant : descendants) {
         if (descendant != nullptr) {
-            std::cout << toString();
+            // std::cout << toString();
             file << toString() << "->" << descendant->toString() << ";\n\t";
-            std::cout << "         " << (descendant) << '\n';
+            // std::cout << "         " << (descendant) << '\n';
             descendant->printInfo(file);
         }
         // if (descendant != nullptr) descendant->printInfo(file);
@@ -151,5 +146,139 @@ std::vector<BTree::Key> BTree::NodeBTree::getKeys(){
     }
     return result;
 }
+//          DELETE
+bool BTree::DEL(const Key& key) {
+    if(!root)
+        throw std::invalid_argument("Error! This tree is empty!");
+    root->deletion(key);
+    // printToGraphViz("temp.dot");
+    if(root->descendants.size()==0){
+        NodeBTree* temp=root;
+        if(root->isLeaf){
+            root =nullptr;
+        } else {
+            root=root->descendants[0];
+        }
+        delete  temp;
+    }
+    std::cout<<root->findValueByKeyCurrNode(key);
+    return true;
+}
 
+int BTree::NodeBTree::findValueByKeyCurrNode(const Key& key){
+  return std::find_if(keyValues.begin(),keyValues.end(),[&key](std::pair<Key,Value>* temp){ return temp->first>=key;})-keyValues.begin();
+}
+
+void BTree::NodeBTree::deletion(const Key& key){
+    auto index=findValueByKeyCurrNode(key);
+    std::cout<<index<<"      |";
+    if(index<keyValues.size()&&keyValues[index]->first==key){
+        if(isLeaf){
+            removeFromLeaf(index);
+        }else {
+            removeFromNotLeaf(index);
+        }
+    }else {
+        std::cout<<"Not found in this node!"<<'\n';
+        if(isLeaf)
+            throw std::invalid_argument("Error! The key "+key+" is does not exist in the tree!");
+        if (descendants[index]->keyValues.size() < degree) {
+            fill(index);
+        }
+        descendants[index]->deletion(key);
+    }
+}
+void BTree::NodeBTree::removeFromLeaf(int index){
+    delete keyValues[index];
+    keyValues.erase(keyValues.begin()+index);
+    descendants.erase(descendants.begin());
+}
+void BTree::NodeBTree::removeFromNotLeaf(int index){
+    if(descendants[index]->keyValues.size() >= degree){
+        // std::cout<<"getPredecessor\n";
+        auto pred= getPredecessor(index);
+        std::swap(*pred,keyValues[index]);
+        descendants[index]->deletion((*pred)->first);
+    } else if(descendants[index+1]->keyValues.size() >= degree){
+        auto succ=getSuccessor(index);
+        // std::cout<<"getSuccessor    "<<(*succ)->first<<"\n";
+        std::swap(*succ,keyValues[index]);
+        // std::cout<<keyValues[index]->first<<"    "<<(*succ)->first<<"\n";
+        descendants[index+1]->deletion((*succ)->first);
+    } else {
+        auto temp= keyValues[index]->first;
+        // std::cout<<"merge\n";
+        merge(index);
+        descendants[index]->deletion(temp);
+    }
+}
+std::pair<s21::BTree::Key, s21::BTree::Value>** BTree::NodeBTree::getPredecessor(int index){
+    NodeBTree* cur= descendants[index];
+    while(!cur->isLeaf){
+        cur=cur->descendants[cur->keyValues.size()];
+    }
+    return &(cur->keyValues[cur->keyValues.size()-1]);
+}
+std::pair<s21::BTree::Key, s21::BTree::Value>** BTree::NodeBTree::getSuccessor(int index){
+    NodeBTree* cur= descendants[index+1];
+    while(!cur->isLeaf){
+        cur=cur->descendants[0];
+    }
+    return &(cur->keyValues[0]);
+}
+void BTree::NodeBTree::fill(int index){
+    if (index != 0 && descendants[index - 1]->keyValues.size() >= degree){
+        std::cout<<"borrowFromPrev\n";
+        borrowFromPrev(index);
+    }else if (index != keyValues.size() && descendants[index + 1]->keyValues.size() >= degree){
+        std::cout<<"borrowFromNext\n";
+        borrowFromNext(index);
+    }else {
+        std::cout<<"merge\n";
+        if (index != keyValues.size())
+            merge(index);
+        else
+            merge(index - 1);
+    }
+}
+void BTree::NodeBTree::borrowFromPrev(int index){
+    NodeBTree *child = descendants[index];
+    NodeBTree *sibling = descendants[index - 1];
+    child->keyValues.push_front(keyValues[index-1]);
+    if (child->isLeaf) {
+        child->descendants.push_front(sibling->descendants.back());
+        sibling->descendants.pop_back();
+    }
+    keyValues[index-1]=sibling->keyValues.back();
+    sibling->keyValues.pop_back();
+}
+void BTree::NodeBTree::borrowFromNext(int index){
+    NodeBTree *child = descendants[index];
+    NodeBTree *sibling = descendants[index + 1];
+    child->keyValues.push_back(keyValues[index]);
+    if (child->isLeaf) {
+        child->descendants.push_back(sibling->descendants.front());
+        sibling->descendants.pop_front();
+    }
+    keyValues[index]=sibling->keyValues.front();
+    sibling->keyValues.pop_front();
+
+}
+void BTree::NodeBTree::merge(int index){
+    // std::cout<<"ku "<<index<<'\n';
+    NodeBTree *child = descendants[index];
+    NodeBTree *sibling = descendants[index + 1];
+    child->keyValues.push_back(keyValues[index]);
+    for(auto kv : sibling->keyValues){
+        child->keyValues.push_back(kv);
+    }
+    if(!child->isLeaf){
+        for(auto descendant: sibling->descendants)
+            child->descendants.push_back(descendant);
+    }
+    keyValues.erase(keyValues.begin()+index);
+    descendants.erase(descendants.begin()+index+1);
+    
+    delete sibling;
+}
 }  // namespace s21

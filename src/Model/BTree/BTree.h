@@ -3,7 +3,7 @@
 #include <deque>
 #include <ostream>
 #include <string>
-
+#include <exception>
 #include "../IDataOperations.h"
 namespace s21 {
 
@@ -27,10 +27,21 @@ class BTree : public IDataOperations {
         void printInfo(std::ofstream&);
         std::pair<Key,Value>* findValueByKey(const Key&);
         std::vector<Key> getKeys();
+
+        void deletion(const Key& key);
+        int findValueByKeyCurrNode(const Key& key);
+        void removeFromLeaf(int index);
+        void removeFromNotLeaf(int index);
+        std::pair<Key, Value>** getPredecessor(int idx);
+        std::pair<Key, Value>** getSuccessor(int idx);
+        void fill(int idx);
+        void borrowFromPrev(int idx);
+        void borrowFromNext(int idx);
+        void merge(int idx);
     };
 
    public:
-    BTree(int newlevel) {
+    explicit BTree(int newlevel) {
         if (newlevel > MAX_ORDER_OF_NODE || newlevel < MIN_ORDER_OF_NODE)
             throw std::invalid_argument("Incorrect value in constructor!");
         degree = newlevel;
@@ -38,7 +49,7 @@ class BTree : public IDataOperations {
     void SET(const Key& key, const Value& value) final;
     std::optional<Value> GET(const Key&) final;
     bool EXISTS(const Key&) final;
-    // bool DEL(const Key&) final {}
+    bool DEL(const Key&) final ;
     void UPDATE(const Key&, const Value&) final;
     std::vector<Key> KEYS() final;
     // void RENAME(const Key&, const Key&) final {}
@@ -50,7 +61,7 @@ class BTree : public IDataOperations {
     //            CONSTRUCTORS AND DESTRUCTORS
     size_t sizeOfDescendants() { return root->descendants.size(); }
     void printToGraphViz(const std::string&);
-
+    virtual ~BTree(){}
    private:
     bool rootIsFull() { return root->keyValues.size() == (2 * degree - 1); }
 

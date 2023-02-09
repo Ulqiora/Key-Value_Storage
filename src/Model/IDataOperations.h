@@ -18,7 +18,7 @@ public:
     virtual void SET(const Key&,const Value&)=0;
     virtual std::optional<Value> GET(const Key&)=0;
     virtual bool EXISTS(const Key&)=0;
-    // virtual bool DEL(const Key&)=0;
+    virtual bool DEL(const Key&)=0;
     virtual void UPDATE(const Key&,const Value&)=0;
     virtual std::vector<Key> KEYS()=0;
     // virtual void RENAME(const Key&,const Key&)=0;
@@ -27,6 +27,7 @@ public:
     // virtual void SHOWALL() =0;
     // virtual void UPLOAD(const std::string&)=0;
     // virtual void EXPORT(const std::string&)=0;
+    virtual ~IDataOperations(){}
 };
 
 }
