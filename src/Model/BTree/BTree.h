@@ -3,7 +3,9 @@
 #include <deque>
 #include <ostream>
 #include <string>
+
 #include <exception>
+#include <iomanip>
 #include "../IDataOperations.h"
 namespace s21 {
 
@@ -24,10 +26,9 @@ class BTree : public IDataOperations {
         bool nodeIsLeaf() { return isLeaf == true; }
         bool isFull() { return keyValues.size() == (degree * 2 - 1); }
         std::string toString();
-        void printInfo(std::ofstream&);
         std::pair<Key,Value>* findValueByKey(const Key&);
         std::vector<Key> getKeys();
-
+        // delete
         void deletion(const Key& key);
         int findValueByKeyCurrNode(const Key& key);
         void removeFromLeaf(int index);
@@ -38,6 +39,14 @@ class BTree : public IDataOperations {
         void borrowFromPrev(int idx);
         void borrowFromNext(int idx);
         void merge(int idx);
+        // find
+        std::vector<Key> findKeysByValue(const Value& value);
+        // showall
+        void printInfo(int& index);
+        // export
+        void printInfo(std::ofstream& file);
+        // upload
+        // void readInfo(std::ifstream& file);
     };
 
    public:
@@ -52,12 +61,20 @@ class BTree : public IDataOperations {
     bool DEL(const Key&) final ;
     void UPDATE(const Key&, const Value&) final;
     std::vector<Key> KEYS() final;
-    // void RENAME(const Key&, const Key&) final {}
+    void RENAME(const Key& prev, const Key& updated) final {
+        auto temp = *(root->findValueByKey(prev));
+        DEL(prev);
+        SET(updated,temp.second);
+    }
     // void TTL(const Key&) final {}
-    // std::vector<Key> FIND(const Value&) final {}
-    // void SHOWALL() final {}
-    // void UPLOAD(const std::string&) final {}
-    // void EXPORT(const std::string&) final {}
+    std::vector<Key> FIND(const Value& value) final {
+        auto temp = root->findKeysByValue(value);
+        std::sort(temp.begin(),temp.end());
+        return temp;
+    }
+    void SHOWALL() final ;
+    void UPLOAD(const std::string& filename) final;
+    void EXPORT(const std::string&) final ;
     //            CONSTRUCTORS AND DESTRUCTORS
     size_t sizeOfDescendants() { return root->descendants.size(); }
     void printToGraphViz(const std::string&);

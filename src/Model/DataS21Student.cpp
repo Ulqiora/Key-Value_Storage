@@ -16,9 +16,9 @@ DataS21Student::DataS21Student(const DataS21Student& other)
       numOfCoins(other.numOfCoins) {}
 
 std::string DataS21Student::toStdString() const {
-    std::string result;
-    return lastname + " " + firstname + " " + std::to_string(birthYear) + " " + city + " " +
-           std::to_string(numOfCoins);
+    return " \"" + lastname + "\" \"" + firstname + "\" " +
+            std::to_string(birthYear) + " \"" + city + "\" " +
+            std::to_string(numOfCoins);
 }
 void DataS21Student::initFromStdStr(const std::string& initStr){
     std::stringstream ss(initStr);
@@ -37,21 +37,29 @@ int DataS21Student::getYear(){return birthYear;}
 int DataS21Student::getCoins(){return numOfCoins;}
 
 std::ostream& operator<<(std::ostream& os, DataS21Student& entry) {
-    os << entry.toStdString();
+    os  <<std::left<< std::setw(15)    <<" \"" + entry.getLastname() + "\"" 
+        <<std::left<< std::setw(15)    <<" \"" + entry.getFirstname() + "\" "
+        <<std::left<< std::setw(8)     <<  std::to_string(entry.getYear())
+        <<std::left<< std::setw(15)    << " \"" + entry.getCity() + "\" "
+        <<std::left<< std::setw(8)     <<entry.getCoins();
     return os;
 }
 std::ofstream& operator<<(std::ofstream& ofs, DataS21Student& entry) {
-    ofs << entry.toStdString();
+    ofs  <<std::left<< std::setw(15)    <<" \"" + entry.getLastname() + "\"" 
+        <<std::left<< std::setw(15)    <<" \"" + entry.getFirstname() + "\" "
+        <<std::left<< std::setw(8)     <<  std::to_string(entry.getYear())
+        <<std::left<< std::setw(15)    << " \"" + entry.getCity() + "\" "
+        <<std::left<< std::setw(8)     <<entry.getCoins();
     return ofs;
 }
 
 std::istream& operator>>(std::istream& is, DataS21Student& entry) {
     std::string tempstring;
     int tempint;
-    is >> tempstring, entry.setFirstname(tempstring);
-    is >> tempstring, entry.setLastname(tempstring);
+    is >> tempstring, entry.setFirstname(tempstring.substr(1,tempstring.size()-2));
+    is >> tempstring, entry.setLastname(tempstring.substr(1,tempstring.size()-2));
     is >> tempint, entry.setYear(tempint);
-    is >> tempstring, entry.setLastname(tempstring);
+    is >> tempstring, entry.setCity(tempstring.substr(1,tempstring.size()-2));
     is >> tempint, entry.setCoins(tempint);
     return is;
 }
@@ -59,27 +67,27 @@ std::istream& operator>>(std::istream& is, DataS21Student& entry) {
 std::ifstream& operator>>(std::ifstream& ifs, DataS21Student& entry) {
     std::string tempstring;
     int tempint;
-    ifs >> tempstring, entry.setFirstname(tempstring);
-    ifs >> tempstring, entry.setLastname(tempstring);
+    ifs >> tempstring, entry.setFirstname(tempstring.substr(1,tempstring.size()-2));
+    ifs >> tempstring, entry.setLastname(tempstring.substr(1,tempstring.size()-2));
     ifs >> tempint, entry.setYear(tempint);
-    ifs >> tempstring, entry.setLastname(tempstring);
+    ifs >> tempstring, entry.setCity(tempstring.substr(1,tempstring.size()-2));
     ifs >> tempint, entry.setCoins(tempint);
     return ifs;
 }
 
 bool DataS21Student::operator==(const DataS21Student& other) const {
-    if(other.birthYear!=birthYear) return false;
-    if(other.firstname!=firstname) return false;
-    if(other.lastname!=lastname) return false;
-    if(other.city!=city) return false;
-    if(other.numOfCoins!=numOfCoins) return false;
+    if(!(other.birthYear==birthYear|| other.birthYear==-1 || birthYear==-1)) return false;
+    if(!(other.firstname==firstname|| other.firstname=="-" || firstname=="-")) return false;
+    if(!(other.lastname==lastname|| other.lastname=="-" || lastname=="-")) return false;
+    if(!(other.city==city|| other.city=="-" || city=="-")) return false;
+    if(!(other.numOfCoins==numOfCoins|| other.numOfCoins==-1 || numOfCoins==-1)) return false;
     return true;
 }
 
 DataS21Student& DataS21Student::operator=(const DataS21Student& other){
   if (other.firstname != "-") firstname = other.firstname;
   if (other.lastname != "-") lastname = other.lastname;
-  if (other.birthYear != 0) birthYear = other.birthYear;
+  if (other.birthYear != -1) birthYear = other.birthYear;
   if (other.city != "-") city = other.city;
   if (other.numOfCoins != -1) numOfCoins = other.numOfCoins;
   return *this;

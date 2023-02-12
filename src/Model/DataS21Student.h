@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include <sstream>
 namespace s21 {
 

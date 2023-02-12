@@ -67,18 +67,6 @@ std::string BTree::NodeBTree::toString() {
     return temp + std::to_string(descendants.size()) + "\"" ;
 }
 
-void BTree::NodeBTree::printInfo(std::ofstream& file) {
-    for (auto descendant : descendants) {
-        if (descendant != nullptr) {
-            // std::cout << toString();
-            file << toString() << "->" << descendant->toString() << ";\n\t";
-            // std::cout << "         " << (descendant) << '\n';
-            descendant->printInfo(file);
-        }
-        // if (descendant != nullptr) descendant->printInfo(file);
-    }
-}
-
 void BTree::printToGraphViz(const std::string& filename ){
     std::ofstream file;
     file.open(filename,std::ofstream::out);
@@ -281,4 +269,74 @@ void BTree::NodeBTree::merge(int index){
     
     delete sibling;
 }
+//          FIND
+std::vector<BTree::Key> BTree::NodeBTree::findKeysByValue(const Value& value){
+    std::vector<Key> result;
+    for(auto kv:keyValues){
+        if(kv->second==value) result.push_back(kv->first);
+    }
+    if (!isLeaf) {
+        for (auto desc : descendants) {
+            auto temp = desc->findKeysByValue(value);
+            std::copy(temp.begin(), temp.end(), std::back_inserter(result));
+        }
+    }
+    return result;
+}
+//          SHOWALL
+void BTree::SHOWALL() {
+    int i=1;
+    std::cout   <<std::left<<std::setw(3)<<"№   "
+                <<std::left<<std::setw(15)<<"|Last name"
+                <<std::left<<std::setw(14)<<"|First name"
+                <<std::left<<std::setw(8)<<"|Birthday"
+                <<std::left<<std::setw(14)<<"|City"
+                <<std::left<<std::setw(8)<<"|Coins"<<"|\n";
+    if(root) root->printInfo(i);
+}
+void BTree::NodeBTree::printInfo(int& index){
+    for(int i=0;i<keyValues.size();i++){
+        if(!isLeaf) descendants[i]->printInfo(index);
+        std::cout<<std::setw(4)<<index++<<keyValues[i]->second<<'\n';
+    }
+    if(!isLeaf) descendants.back()->printInfo(index);
+}
+//          EXPORT
+void BTree::EXPORT(const std::string& filename){
+    std::ofstream file(filename);
+    if(file.is_open()){
+        if(root){
+            root->printInfo(file);
+        }
+        file.close();
+    } else {
+        throw std::invalid_argument("This file "+filename+" is not opened!");
+    }
+}
+void BTree::NodeBTree::printInfo(std::ofstream& file) {
+    for(int i=0;i<keyValues.size();i++){
+        if(!isLeaf) descendants[i]->printInfo(file);
+        file<<std::left<<std::setw(10)<<keyValues[i]->first<<keyValues[i]->second<<'\n';
+    }
+    if(!isLeaf) descendants.back()->printInfo(file);
+}
+//          UPLOAD
+void BTree::UPLOAD(const std::string& filename) {
+    std::ifstream file(filename);
+    if(file.is_open()){
+        Value tempValue;
+        Key tempKey;
+        std::string currline;
+        while(std::getline(file,currline)){
+            std::stringstream currLineStream{currline};
+            currLineStream>>tempKey;
+            currLineStream>>tempValue;
+            SET(tempKey,tempValue);
+        }
+        file.close();
+    } else {
+        throw std::invalid_argument("This file "+filename+" is not opened!");
+    }
+}
+
 }  // namespace s21
