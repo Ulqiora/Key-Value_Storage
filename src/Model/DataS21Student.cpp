@@ -37,10 +37,10 @@ int DataS21Student::getYear(){return birthYear;}
 int DataS21Student::getCoins(){return numOfCoins;}
 
 std::ostream& operator<<(std::ostream& os, DataS21Student& entry) {
-    os  <<std::left<< std::setw(15)    <<" \"" + entry.getLastname() + "\"" 
-        <<std::left<< std::setw(15)    <<" \"" + entry.getFirstname() + "\" "
+    os  <<std::left<< std::setw(15)    <<entry.getLastname()
+        <<std::left<< std::setw(15)    <<entry.getFirstname()
         <<std::left<< std::setw(8)     <<  std::to_string(entry.getYear())
-        <<std::left<< std::setw(15)    << " \"" + entry.getCity() + "\" "
+        <<std::left<< std::setw(15)    << entry.getCity()
         <<std::left<< std::setw(8)     <<entry.getCoins();
     return os;
 }
@@ -56,10 +56,10 @@ std::ofstream& operator<<(std::ofstream& ofs, DataS21Student& entry) {
 std::istream& operator>>(std::istream& is, DataS21Student& entry) {
     std::string tempstring;
     int tempint;
-    is >> tempstring, entry.setFirstname(tempstring.substr(1,tempstring.size()-2));
-    is >> tempstring, entry.setLastname(tempstring.substr(1,tempstring.size()-2));
+    is >> tempstring, entry.setLastname(tempstring);
+    is >> tempstring, entry.setFirstname(tempstring);
     is >> tempint, entry.setYear(tempint);
-    is >> tempstring, entry.setCity(tempstring.substr(1,tempstring.size()-2));
+    is >> tempstring, entry.setCity(tempstring);
     is >> tempint, entry.setCoins(tempint);
     return is;
 }
@@ -67,10 +67,10 @@ std::istream& operator>>(std::istream& is, DataS21Student& entry) {
 std::ifstream& operator>>(std::ifstream& ifs, DataS21Student& entry) {
     std::string tempstring;
     int tempint;
-    ifs >> tempstring, entry.setFirstname(tempstring.substr(1,tempstring.size()-2));
-    ifs >> tempstring, entry.setLastname(tempstring.substr(1,tempstring.size()-2));
+    ifs >> tempstring, entry.setLastname(tempstring);
+    ifs >> tempstring, entry.setFirstname(tempstring);
     ifs >> tempint, entry.setYear(tempint);
-    ifs >> tempstring, entry.setCity(tempstring.substr(1,tempstring.size()-2));
+    ifs >> tempstring, entry.setCity(tempstring);
     ifs >> tempint, entry.setCoins(tempint);
     return ifs;
 }

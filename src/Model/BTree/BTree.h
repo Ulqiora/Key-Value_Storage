@@ -3,7 +3,7 @@
 #include <deque>
 #include <ostream>
 #include <string>
-
+#include <optional>
 #include <exception>
 #include <iomanip>
 #include "../IDataOperations.h"
@@ -43,10 +43,14 @@ class BTree : public IDataOperations {
         std::vector<Key> findKeysByValue(const Value& value);
         // showall
         void printInfo(int& index);
+        std::vector<DataS21Student> getAllValues();
         // export
-        void printInfo(std::ofstream& file);
+        int printInfo(std::ofstream& file);
         // upload
         // void readInfo(std::ifstream& file);
+
+        // dot
+        void printToGraph(std::ofstream& file);
     };
 
    public:
@@ -55,16 +59,17 @@ class BTree : public IDataOperations {
             throw std::invalid_argument("Incorrect value in constructor!");
         degree = newlevel;
     }
-    void SET(const Key& key, const Value& value) final;
+    bool SET(const Key& key, const Value& value) final;
     std::optional<Value> GET(const Key&) final;
     bool EXISTS(const Key&) final;
     bool DEL(const Key&) final ;
-    void UPDATE(const Key&, const Value&) final;
+    bool UPDATE(const Key&, const Value&) final;
     std::vector<Key> KEYS() final;
-    void RENAME(const Key& prev, const Key& updated) final {
+    bool RENAME(const Key& prev, const Key& updated) final {
         auto temp = *(root->findValueByKey(prev));
         DEL(prev);
         SET(updated,temp.second);
+        return true;
     }
     // void TTL(const Key&) final {}
     std::vector<Key> FIND(const Value& value) final {
@@ -72,9 +77,9 @@ class BTree : public IDataOperations {
         std::sort(temp.begin(),temp.end());
         return temp;
     }
-    void SHOWALL() final ;
-    void UPLOAD(const std::string& filename) final;
-    void EXPORT(const std::string&) final ;
+    std::vector<DataS21Student> SHOWALL() final ;
+    int UPLOAD(const std::string& filename) final;
+    int EXPORT(const std::string&) final ;
     //            CONSTRUCTORS AND DESTRUCTORS
     size_t sizeOfDescendants() { return root->descendants.size(); }
     void printToGraphViz(const std::string&);

@@ -1,14 +1,13 @@
 #include "BTree.h"
-
-namespace s21 {
+namespace s21{
 //          SET
-void BTree::SET(const Key& key, const Value& value) {
+bool BTree::SET(const Key& key, const Value& value) {
     if (root == nullptr) {
         root = new NodeBTree(degree, true);
         root->keyValues.push_back(new std::pair<Key, Value>(key, value));
         root->descendants.push_back(nullptr);
         root->descendants.push_back(nullptr);
-        return;
+        return true;
     }
     if (rootIsFull()) {
         NodeBTree* newRoot = new NodeBTree(degree, false);
@@ -21,6 +20,7 @@ void BTree::SET(const Key& key, const Value& value) {
     } else {
         root->insert(key,value);
     }
+    return true;
 }
 
 void BTree::NodeBTree::insert(const Key& key, const Value& value){
@@ -72,7 +72,7 @@ void BTree::printToGraphViz(const std::string& filename ){
     file.open(filename,std::ofstream::out);
     if(file.is_open()){
         file<<"digraph { \n\t";
-        root->printInfo(file);
+        root->printToGraph(file);
         file<<" }";
         file.close();
     }
@@ -103,9 +103,10 @@ bool BTree::EXISTS(const Key& key){
     return root->findValueByKey(key)==nullptr;
 }
 //          UPDATE
-void BTree::UPDATE(const Key& key, const Value& value) {
+bool BTree::UPDATE(const Key& key, const Value& value) {
     std::pair<Key,Value>* findedPair=root->findValueByKey(key);
     if(findedPair!=nullptr) findedPair->second=value;
+    return findedPair!=nullptr;
 }
 //          KEYS
 std::vector<BTree::Key> BTree::KEYS(){
@@ -135,7 +136,8 @@ std::vector<BTree::Key> BTree::NodeBTree::getKeys(){
     return result;
 }
 //          DELETE
-bool BTree::DEL(const Key& key) {
+
+bool s21::BTree::DEL(const Key& key) {
     if(!root)
         throw std::invalid_argument("Error! This tree is empty!");
     root->deletion(key);
@@ -183,19 +185,15 @@ void BTree::NodeBTree::removeFromLeaf(int index){
 }
 void BTree::NodeBTree::removeFromNotLeaf(int index){
     if(descendants[index]->keyValues.size() >= degree){
-        // std::cout<<"getPredecessor\n";
         auto pred= getPredecessor(index);
         std::swap(*pred,keyValues[index]);
         descendants[index]->deletion((*pred)->first);
     } else if(descendants[index+1]->keyValues.size() >= degree){
         auto succ=getSuccessor(index);
-        // std::cout<<"getSuccessor    "<<(*succ)->first<<"\n";
         std::swap(*succ,keyValues[index]);
-        // std::cout<<keyValues[index]->first<<"    "<<(*succ)->first<<"\n";
         descendants[index+1]->deletion((*succ)->first);
     } else {
         auto temp= keyValues[index]->first;
-        // std::cout<<"merge\n";
         merge(index);
         descendants[index]->deletion(temp);
     }
@@ -253,7 +251,6 @@ void BTree::NodeBTree::borrowFromNext(int index){
 
 }
 void BTree::NodeBTree::merge(int index){
-    // std::cout<<"ku "<<index<<'\n';
     NodeBTree *child = descendants[index];
     NodeBTree *sibling = descendants[index + 1];
     child->keyValues.push_back(keyValues[index]);
@@ -284,16 +281,27 @@ std::vector<BTree::Key> BTree::NodeBTree::findKeysByValue(const Value& value){
     return result;
 }
 //          SHOWALL
-void BTree::SHOWALL() {
-    int i=1;
-    std::cout   <<std::left<<std::setw(3)<<"№   "
-                <<std::left<<std::setw(15)<<"|Last name"
-                <<std::left<<std::setw(14)<<"|First name"
-                <<std::left<<std::setw(8)<<"|Birthday"
-                <<std::left<<std::setw(14)<<"|City"
-                <<std::left<<std::setw(8)<<"|Coins"<<"|\n";
-    if(root) root->printInfo(i);
+std::vector<DataS21Student> BTree::SHOWALL() {
+    if(!root) return std::vector<DataS21Student>();
+    return root->getAllValues();
 }
+
+std::vector<DataS21Student> BTree::NodeBTree::getAllValues(){
+    std::vector<DataS21Student> result;
+    for(int i=0;i<keyValues.size();i++){
+        if (!isLeaf) {
+            auto temp = std::move(descendants[i]->getAllValues());
+            result.insert(result.end(),temp.begin(),temp.end());
+        }
+        result.push_back(keyValues[i]->second);
+    }
+    if (!isLeaf) {
+        auto temp = std::move(descendants.back()->getAllValues());
+        result.insert(result.end(),temp.begin(),temp.end());
+    }
+    return result;
+}
+
 void BTree::NodeBTree::printInfo(int& index){
     for(int i=0;i<keyValues.size();i++){
         if(!isLeaf) descendants[i]->printInfo(index);
@@ -302,26 +310,29 @@ void BTree::NodeBTree::printInfo(int& index){
     if(!isLeaf) descendants.back()->printInfo(index);
 }
 //          EXPORT
-void BTree::EXPORT(const std::string& filename){
+int BTree::EXPORT(const std::string& filename){
     std::ofstream file(filename);
+    int res{0};
     if(file.is_open()){
         if(root){
-            root->printInfo(file);
+            res=root->printInfo(file);
         }
         file.close();
-    } else {
-        throw std::invalid_argument("This file "+filename+" is not opened!");
     }
+    return 0;
 }
-void BTree::NodeBTree::printInfo(std::ofstream& file) {
+int BTree::NodeBTree::printInfo(std::ofstream& file) {
+    int result=0;
     for(int i=0;i<keyValues.size();i++){
-        if(!isLeaf) descendants[i]->printInfo(file);
+        if(!isLeaf) result+=descendants[i]->printInfo(file);
         file<<std::left<<std::setw(10)<<keyValues[i]->first<<keyValues[i]->second<<'\n';
+        result++;
     }
-    if(!isLeaf) descendants.back()->printInfo(file);
+    if(!isLeaf) result+=descendants.back()->printInfo(file);
+    return result;
 }
 //          UPLOAD
-void BTree::UPLOAD(const std::string& filename) {
+int BTree::UPLOAD(const std::string& filename) {
     std::ifstream file(filename);
     if(file.is_open()){
         Value tempValue;
@@ -336,6 +347,19 @@ void BTree::UPLOAD(const std::string& filename) {
         file.close();
     } else {
         throw std::invalid_argument("This file "+filename+" is not opened!");
+    }
+    return 0;
+}
+
+// dot
+void BTree::NodeBTree::printToGraph(std::ofstream& file){
+    for (auto descendant : descendants) {
+        if (descendant != nullptr) {
+            std::cout << toString();
+            file << toString() << "->" << descendant->toString() << ";\n\t";
+            std::cout << "         " << (descendant) << '\n';
+            descendant->printToGraph(file);
+        }
     }
 }
 

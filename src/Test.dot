@@ -1,26 +1,9 @@
 digraph { 
-	10         "fsda"         "fdsa"        22       "fdas"        21      
-10         "fdsa"         "fsda"        22       "fdas"        21      
-12         "fsda"         "fdsa"        22       "fdas"        22      
-12         "fdsa"         "fsda"        22       "fdas"        22      
-15         "fsda"         "fdsa"        22       "fdas"        23      
-15         "fdsa"         "fsda"        22       "fdas"        23      
-20         "fsda"         "fdsa"        22       "fdas"        24      
-20         "fdsa"         "fsda"        22       "fdas"        24      
-25         "fsda"         "fdsa"        22       "fdas"        21      
-25         "fdsa"         "fsda"        22       "fdas"        21      
-30         "fsda"         "fdsa"        22       "fdas"        25      
-30         "fdsa"         "fsda"        22       "fdas"        25      
-40         "fsda"         "fdsa"        22       "fdas"        26      
-40         "fdsa"         "fsda"        22       "fdas"        26      
-43         "fsda"         "fdsa"        22       "fdas"        21      
-43         "fdsa"         "fsda"        22       "fdas"        21      
-55         "fsda"         "fdsa"        22       "fdas"        27      
-55         "fdsa"         "fsda"        22       "fdas"        27      
-60         "fsda"         "fdsa"        22       "fdas"        27      
-60         "fdsa"         "fsda"        22       "fdas"        27      
-89         "fsda"         "fdsa"        22       "fdas"        21      
-89         "fdsa"         "fsda"        22       "fdas"        21      
-90         "fsda"         "fdsa"        22       "fdas"        25      
-90         "fdsa"         "fsda"        22       "fdas"        25      
- }
+	"|20|2"->"|12|2";
+	"|12|2"->"|10|2";
+	"|12|2"->"|15|2";
+	"|20|2"->"|40|60|3";
+	"|40|60|3"->"|25|30|3";
+	"|40|60|3"->"|43|55|3";
+	"|40|60|3"->"|89|90|3";
+	 }
