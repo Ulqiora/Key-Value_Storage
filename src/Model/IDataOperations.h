@@ -25,7 +25,7 @@ public:
     // virtual int TTL(const Key&)=0;
     virtual std::vector<Key> FIND(const Value&)=0;
     virtual std::vector<DataS21Student> SHOWALL() =0;
-    virtual int UPLOAD(const std::string& filename)=0;
+    virtual int UPLOAD(const std::string&)=0;
     virtual int EXPORT(const std::string&)=0;
     virtual ~IDataOperations(){}
 };

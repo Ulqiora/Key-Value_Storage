@@ -7,9 +7,7 @@ bool BTree::SET(const Key& key, const Value& value) {
         root->keyValues.push_back(new std::pair<Key, Value>(key, value));
         root->descendants.push_back(nullptr);
         root->descendants.push_back(nullptr);
-        return true;
-    }
-    if (rootIsFull()) {
+    } else if (rootIsFull()) {
         NodeBTree* newRoot = new NodeBTree(degree, false);
         newRoot->descendants.push_back(root);
         newRoot->splitDescendants(0,root);
@@ -135,12 +133,25 @@ std::vector<BTree::Key> BTree::NodeBTree::getKeys(){
     }
     return result;
 }
+//
+bool BTree::RENAME(const Key& prev, const Key& updated) {
+    auto ptr = root->findValueByKey(prev);
+    if(!ptr) return false;
+    if(!DEL(prev)) return false;
+    SET(updated, ptr->second);
+    return true;
+}
+
 //          DELETE
 
 bool s21::BTree::DEL(const Key& key) {
     if(!root)
         throw std::invalid_argument("Error! This tree is empty!");
-    root->deletion(key);
+    try{
+        root->deletion(key);
+    } catch (...){
+        return false;
+    }
     // printToGraphViz("temp.dot");
     if(root->descendants.size()==0){
         NodeBTree* temp=root;
@@ -151,7 +162,7 @@ bool s21::BTree::DEL(const Key& key) {
         }
         delete  temp;
     }
-    std::cout<<root->findValueByKeyCurrNode(key);
+    // std::cout<<root->findValueByKeyCurrNode(key);
     return true;
 }
 
@@ -267,6 +278,11 @@ void BTree::NodeBTree::merge(int index){
     delete sibling;
 }
 //          FIND
+std::vector<BTree::Key> BTree::FIND(const Value& value) {
+    auto temp = root->findKeysByValue(value);
+    std::sort(temp.begin(), temp.end());
+    return temp;
+}
 std::vector<BTree::Key> BTree::NodeBTree::findKeysByValue(const Value& value){
     std::vector<Key> result;
     for(auto kv:keyValues){
@@ -312,12 +328,13 @@ void BTree::NodeBTree::printInfo(int& index){
 //          EXPORT
 int BTree::EXPORT(const std::string& filename){
     std::ofstream file(filename);
-    int res{0};
     if(file.is_open()){
+        int res{0};
         if(root){
-            res=root->printInfo(file);
+            res+=root->printInfo(file);
         }
         file.close();
+        return res;
     }
     return 0;
 }
@@ -338,13 +355,16 @@ int BTree::UPLOAD(const std::string& filename) {
         Value tempValue;
         Key tempKey;
         std::string currline;
+        int i=0;
         while(std::getline(file,currline)){
             std::stringstream currLineStream{currline};
             currLineStream>>tempKey;
             currLineStream>>tempValue;
             SET(tempKey,tempValue);
+            i++;
         }
         file.close();
+        return i;
     } else {
         throw std::invalid_argument("This file "+filename+" is not opened!");
     }
