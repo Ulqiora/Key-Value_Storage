@@ -351,24 +351,23 @@ int BTree::NodeBTree::printInfo(std::ofstream& file) {
 //          UPLOAD
 int BTree::UPLOAD(const std::string& filename) {
     std::ifstream file(filename);
-    if(file.is_open()){
-        Value tempValue;
-        Key tempKey;
-        std::string currline;
-        int i=0;
-        while(std::getline(file,currline)){
-            std::stringstream currLineStream{currline};
-            currLineStream>>tempKey;
-            currLineStream>>tempValue;
-            SET(tempKey,tempValue);
-            i++;
-        }
-        file.close();
-        return i;
-    } else {
+    if(!file.is_open()){
         throw std::invalid_argument("This file "+filename+" is not opened!");
+
     }
-    return 0;
+    Value tempValue;
+    Key tempKey;
+    std::string currline;
+    int i=0;
+    while(std::getline(file,currline)){
+        std::stringstream currLineStream{currline};
+        currLineStream>>tempKey;
+        currLineStream>>tempValue;
+        SET(tempKey,tempValue);
+        i++;
+    }
+    file.close();
+    return i;
 }
 
 // dot

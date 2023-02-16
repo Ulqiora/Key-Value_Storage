@@ -1,16 +1,26 @@
 #include "DataS21Student.h"
 namespace s21 {
-DataS21Student::DataS21Student(const std::string& newFirstname, const std::string& newLastname, int newYear,
+
+bool CheckStruct(const std::string& data) {
+  const std::regex pattern(
+      "\\s+?(\\w+)\\s+(\\w+(-\\w+)?)\\s+(\\w+(-\\w+)?)\\s+(\\d{4})\\s+(\\w+(-"
+      "\\w+)?)\\s+(\\d+)(\\s+EX\\s+\\d+)?");
+
+  return (!data.empty() && regex_match(data, pattern));
+}
+
+
+DataS21Student::DataS21Student(const std::string& newLastname,const std::string& newFirstname, int newYear,
                                const std::string& newCity, int newCoins)
-    : firstname(newFirstname),
-      lastname(newLastname),
+    : lastname(newLastname),
+      firstname(newFirstname),
       birthYear(newYear),
       city(newCity),
       numOfCoins(newCoins) {}
 
 DataS21Student::DataS21Student(const DataS21Student& other)
-    : firstname(other.firstname),
-      lastname(other.lastname),
+    : lastname(other.lastname),
+      firstname(other.firstname),
       birthYear(other.birthYear),
       city(other.city),
       numOfCoins(other.numOfCoins) {}
@@ -20,9 +30,13 @@ std::string DataS21Student::toStdString() const {
             std::to_string(birthYear) + " \"" + city + "\" " +
             std::to_string(numOfCoins);
 }
-void DataS21Student::initFromStdStr(const std::string& initStr){
+void DataS21Student::initThisHyphen(const std::string& initStr){
     std::stringstream ss(initStr);
-    ss >> lastname >> firstname >> birthYear >> city >> numOfCoins;
+    std::string temp;
+    ss >> lastname >> firstname;
+    ss >> temp, birthYear = (temp == "-" ? -1 : std::stoi(temp));
+    ss >> city;
+    ss >> temp, numOfCoins = (temp == "-" ? -1 : std::stoi(temp));
 }
 
 void DataS21Student::setFirstname(const std::string& str) { firstname = str; }

@@ -101,6 +101,7 @@
         "ranges": "cpp",
         "stop_token": "cpp",
         "__bits": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "regex": "cpp"
     }
 }

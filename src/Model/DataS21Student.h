@@ -4,7 +4,10 @@
 #include <string>
 #include <iomanip>
 #include <sstream>
+#include <regex>
+
 namespace s21 {
+bool CheckStruct(const std::string& data);
 
 class DataS21Student {
  public:
@@ -25,7 +28,7 @@ class DataS21Student {
     void setCity(const std::string&);
     void setYear(int);
     void setCoins(int);
-    void initFromStdStr(const std::string&);
+    void initThisHyphen(const std::string&);
  private:
     std::string firstname;
     std::string lastname;
