@@ -1,0 +1,9 @@
+BIG "Wallace" "Christopher" 1972 "LosAngeles" 1
+lol "Cole" "Jermaine" 1985 "Frankfurt" 1000
+OFWGKTA "Okonma" "Tyler" 1991 "Hawthorne" 666
+SHOTTED "Shakur" "Tupac" 1971 "NewYorkCity" 12
+Ye "West" "Kanye" 1977 "Atlanta" 0
+GodsPlan "Graham" "Drake" 1986 "Toronto" 900
+Duckworth "Lamar" "Kendrick" 1987 "Compton" 6
+Future "Wilburn" "Nayvadius" 1983 "Atlanta" 0
+Offset "Cephus" "Kiari" 1991 "Lawrenceville" 88
